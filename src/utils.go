@@ -1,45 +1,47 @@
 package utils
 
 import (
-	// "fmt"
 	"os"
 	"strings"
 )
 
-const file_name = ".env"
+const FileName = ".env"
 
-func read_env_file() (string, error) {
-	data, err := os.ReadFile(file_name)
+// Reads the passed env file and returns its contents as a string
+func readEnvFile(path string) (string, error) {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
 	return string(data), nil
 }
 
-func create_env_map(line string, table map[string]string) {
+// Takes a line from an env file and makes the part before "=" the key
+// and the part after "=" the value of the hash map
+func createEnvTable(line string, table map[string]string) {
 	pairs := strings.Split(line, "=")
 	if len(pairs) == 2 {
-		table[pairs[0]] = pairs[1]
+		key := strings.TrimSpace(pairs[0])
+		value := strings.TrimSpace(pairs[1])
+		table[key] = value
 	}
 }
 
-func get_lines(data string, table map[string]string) {
+func getLines(data string, table map[string]string) {
 	lines := strings.Split(data, "\n")
 	for i := range lines {
 		if lines[i] != "" {
-			create_env_map(lines[i], table)
+			createEnvTable(lines[i], table)
 		}
 	}
 }
 
-func Read() (map[string]string, error) {
+func Read(path string) (map[string]string, error) {
 	table := make(map[string]string)
-
-	data, err := read_env_file()
+	data, err := readEnvFile(path)
 	if err != nil {
 		return nil, err
 	}
-
-	get_lines(data, table)
+	getLines(data, table)
 	return table, nil
 }
