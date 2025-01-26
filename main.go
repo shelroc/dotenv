@@ -1,5 +1,9 @@
-package main
+package dotenv
 
-func main() {
+import (
+	utils "github.com/shelroc/dotenv/src"
+)
 
+func Read() (map[string]string, error) {
+	return utils.Read()
 }
